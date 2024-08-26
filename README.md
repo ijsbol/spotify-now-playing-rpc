@@ -1,0 +1,2 @@
+# spotify-now-playing-rpc
+ 
