@@ -83,6 +83,10 @@ def main() -> None:
     except KeyboardInterrupt:
         print("Program terminated.")
         rpc.close()
+    except Exception:
+        print("Discord unavailable to create RPC pipe.")
+        time.sleep(30)
+        main()
 
 
 if __name__ == "__main__":
