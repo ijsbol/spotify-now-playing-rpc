@@ -1,4 +1,3 @@
-import datetime
 from os import getenv
 from typing import Final
 from requests import get
@@ -27,32 +26,6 @@ def format_ms(ms: int) -> str:
     return mm_ss
 
 
-def create_progress_bar(percentage: int) -> str:
-    percentage = max(0, min(percentage, 100))
-    total_segments = 30
-    completed_segments = round((percentage / 100) * total_segments)
-    progress_bar = '▰' * completed_segments + '▱' * (total_segments - completed_segments)
-    return progress_bar
-
-
-def str_numbers_to_emojis(text: str) -> str:
-    emoji_table = {
-        "1": "𝟷",#0𝟷𝟸𝟹𝟺𝟻𝟼𝟽𝟾𝟿
-        "2": "𝟸",
-        "3": "𝟹",
-        "4": "𝟺",
-        "5": "𝟻",
-        "6": "𝟼",
-        "7": "𝟽",
-        "8": "𝟾",
-        "9": "𝟿",
-        "0": "0️",
-    }
-    for k, v in emoji_table.items():
-        text = text.replace(k, v)
-    return text
-
-
 def main() -> None:
     try:
         while True:
@@ -68,17 +41,19 @@ def main() -> None:
             progress_ms = spotify_data["song_data"]["progress_ms"]
             duration_ms = spotify_data["song_data"]["item"]["duration_ms"]
             album_image_url = spotify_data["song_data"]["item"]["album"]["images"][0]["url"]
-            start_time = format_ms(progress_ms)
-            end_time = format_ms(duration_ms)
-            progress_bar = create_progress_bar(int((progress_ms / duration_ms)*100))
+            timestamp_now = time.time()
+            start_timestamp = timestamp_now - (progress_ms/1000)
+            end_timestamp = timestamp_now + ((duration_ms-progress_ms)/1000) - 1  # weird off-by-one-error
             rpc.update(
                 activity_type=ActivityType.LISTENING,
-                state=f"{str_numbers_to_emojis(start_time)} {progress_bar} {str_numbers_to_emojis(end_time)}",
-                details=f"{song_name} by {artist_names}",
+                state=artist_names,
+                details=f"{song_name}",
                 large_image=album_image_url,
                 large_text=f"🎵 {lyrics_now}",
+                start=start_timestamp,
+                end=end_timestamp,
             )
-            print(f"Updated status: {start_time}-{end_time}")
+            print(f"Updated status: {format_ms(progress_ms)}-{format_ms(duration_ms)}")
             time.sleep(0.7)
     except KeyboardInterrupt:
         print("Program terminated.")
