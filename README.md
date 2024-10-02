@@ -2,4 +2,4 @@
 
 Requires a [ijsbol/spotify-now-playing-api](https://github.com/ijsbol/spotify-now-playing-api) instance to be hosted.
 
-![img](https://pics.uwu.gal/u/ziVhgB.gif)
+![img](https://pics.uwu.gal/u/qx6a0I.gif)
